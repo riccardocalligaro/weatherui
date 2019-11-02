@@ -1,4 +1,4 @@
-# weather_app
+# weather_app ⛈️
 
 A simple ui made in Flutter. Inspired by [this.](https://www.uplabs.com/posts/black-and-white-weather-app)
 
