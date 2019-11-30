@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/bloc/bloc.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: new Scaffold(
+    return SafeArea(
+      child: new Scaffold(
         body: Container(
           decoration: BoxDecoration(color: Colors.black),
           child: Column(
             children: <Widget>[
-              new TopSection(),
-              new MainSection(),
+              IconButton(
+                icon: Icon(
+                  Icons.search,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  BlocProvider.of<WeatherBloc>(context)
+                      .add(FetchWeatherForCity('London'));
+                },
+              ),
+              Expanded(child: new TopSection()),
+              Expanded(child: new MainSection()),
             ],
           ),
         ),
@@ -30,8 +42,6 @@ class MainSection extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.fromLTRB(32, 32, 32, 0),
         child: Container(
-
-            // decoration: BoxDecoration(color: Colors.green),
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -108,12 +118,13 @@ class MainSection extends StatelessWidget {
                         color: Colors.white,
                         size: 16,
                       ),
-                      SizedBox(width: 8,),
+                      SizedBox(
+                        width: 8,
+                      ),
                       Text('2 Novembre 2019')
                     ],
                   ),
                 ),
-                
                 Container(
                   child: Row(
                     children: <Widget>[
@@ -122,12 +133,13 @@ class MainSection extends StatelessWidget {
                         color: Colors.white,
                         size: 16,
                       ),
-                      SizedBox(width: 8,),
+                      SizedBox(
+                        width: 8,
+                      ),
                       Text('Milan, Italy')
                     ],
                   ),
                 ),
-
               ],
             )
           ],
@@ -156,24 +168,6 @@ class TopSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            /*
-            RichText(
-              text: TextSpan(
-                text: 'Rome, ',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'San Francisco',
-                    fontWeight: FontWeight.w400),
-                children: <TextSpan>[
-                  TextSpan(
-                      text: 'Italy',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontFamily: 'San Francisco')),
-                ],
-              ),
-            ),
-            */
             Container(
               height: 42,
             ),
@@ -181,12 +175,27 @@ class TopSection extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    '25°',
-                    style: TextStyle(
-                        fontSize: 100,
-                        fontFamily: 'San Francisco',
-                        fontWeight: FontWeight.w800),
+                  BlocBuilder<WeatherBloc, WeatherState>(
+                    builder: (context, state) {
+                      if (state is WeatherLoading) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (state is WeatherLoaded) {
+                        final _temp = (state.weather.main.temp - 273.15).toStringAsFixed(1);
+                        return Text(
+                          '${_temp}°C',
+                          style: TextStyle(
+                              fontSize: 80,
+                              fontFamily: 'San Francisco',
+                              fontWeight: FontWeight.w800),
+                        );
+                      } else if (state is WeatherLoaded) {
+                        return Center(
+                          child: Text('error'),
+                        );
+                      }
+                    },
                   ),
                   Text(
                     'Sunny',

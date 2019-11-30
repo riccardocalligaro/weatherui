@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/pages/HomePage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/pages/home_page.dart';
+
+import 'bloc/bloc.dart';
 
 void main() => runApp(MyApp());
 
@@ -9,13 +12,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'San Francisco'
-      ),
-      home: HomePage(),
+      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'San Francisco'),
+      home: BlocProvider(
+        create: (context) => WeatherBloc(),
+        child: HomePage(),
+      )
     );
   }
 }
-
-
